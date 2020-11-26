@@ -4,5 +4,4 @@
     <string name="categories">Categories</string>
     <string name="error_message">Fail to load</string>
     <string name="error_message_end_of_list">Reached the end</string>
-    <string name="error_message_time_out">Request timeout</string>
 </resources>

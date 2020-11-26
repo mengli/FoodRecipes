@@ -1,6 +1,7 @@
 package study.android.foodrecipes.requests
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 import study.android.foodrecipes.response.RecipeResponse
@@ -12,8 +13,8 @@ interface RecipeApi {
     fun getRecipe(@Query("rid") rId: String): Call<RecipeResponse>
 
     @GET("api/search")
-    fun searchRecipe(
+    suspend fun searchRecipe(
         @Query("q") query: String,
         @Query("page") page: Int
-    ): Call<RecipeSearchResponse>
+    ): Response<RecipeSearchResponse>
 }

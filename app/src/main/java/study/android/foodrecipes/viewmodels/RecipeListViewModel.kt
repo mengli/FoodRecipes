@@ -4,13 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.common.util.concurrent.FutureCallback
-import com.google.common.util.concurrent.Futures
-import com.google.common.util.concurrent.MoreExecutors
-import retrofit2.Response
 import study.android.foodrecipes.models.Recipe
 import study.android.foodrecipes.repositories.RecipeRepository
-import study.android.foodrecipes.response.RecipeSearchResponse
 
 class RecipeListViewModel : ViewModel() {
 
@@ -22,8 +17,7 @@ class RecipeListViewModel : ViewModel() {
         LOADING,
         DONE,
         END,
-        ERROR,
-        TIME_OUT
+        ERROR
     }
 
     private val recipeRepository = RecipeRepository
@@ -39,42 +33,26 @@ class RecipeListViewModel : ViewModel() {
         return recipes
     }
 
-    fun searchRecipeApi(query: String, page: Int) {
+    suspend fun searchRecipeApi(query: String, page: Int) {
         loadStatus.postValue(LoadStatus.LOADING)
-        val searchResponseFuture = recipeRepository.searchRecipeApi(query, page)
-        Futures.addCallback(
-            searchResponseFuture,
-            object : FutureCallback<Response<RecipeSearchResponse>> {
-                override fun onSuccess(result: Response<RecipeSearchResponse>?) {
-                    Log.d(TAG, "Receive response.")
-                    when (result?.code()) {
-                        200 -> {
-                            if (result.body()?.recipes.isNullOrEmpty()) {
-                                loadStatus.postValue(LoadStatus.END)
-                            } else {
-                                loadStatus.postValue(LoadStatus.DONE)
-                                if (page == 1) {
-                                    recipes.postValue(result.body()?.recipes)
-                                } else {
-                                    val currentRecipeList = recipes.value?.toMutableList()
-                                    result.body()?.recipes?.let { currentRecipeList?.addAll(it) }
-                                    recipes.postValue(currentRecipeList)
-                                }
-                            }
-                        }
-                        else -> {
-                            Log.e(TAG, "Network error: ${result?.errorBody()}")
-                            loadStatus.postValue(LoadStatus.ERROR)
-                        }
-                    }
+        val searchResponse = recipeRepository.searchRecipeApi(query, page)
+        if (searchResponse?.isSuccessful) {
+            Log.d(TAG, "Receive response successfully.")
+            if (searchResponse.body()?.recipes.isNullOrEmpty()) {
+                loadStatus.postValue(LoadStatus.END)
+            } else {
+                loadStatus.postValue(LoadStatus.DONE)
+                if (page == 1) {
+                    recipes.postValue(searchResponse.body()?.recipes)
+                } else {
+                    val currentRecipeList = recipes.value?.toMutableList()
+                    searchResponse.body()?.recipes?.let { currentRecipeList?.addAll(it) }
+                    recipes.postValue(currentRecipeList)
                 }
-
-                override fun onFailure(t: Throwable) {
-                    Log.d(TAG, "Fail $t")
-                    loadStatus.postValue(LoadStatus.TIME_OUT)
-                }
-            },
-            MoreExecutors.directExecutor()
-        )
+            }
+        } else {
+            Log.e(TAG, "Network error: ${searchResponse?.errorBody()}")
+            loadStatus.postValue(LoadStatus.ERROR)
+        }
     }
 }
