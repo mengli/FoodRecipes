@@ -1,0 +1,25 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@+id/category_dest">
+
+    <fragment
+        android:id="@+id/category_dest"
+        android:name="study.android.foodrecipes.CategoryListFragment"
+        tools:layout="@layout/category_list_fragment">
+        <action
+            android:id="@+id/next_action"
+            app:destination="@+id/recipe_dest" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipe_dest"
+        android:name="study.android.foodrecipes.RecipeListFragment"
+        tools:layout="@layout/recipe_list_fragment">
+        <argument
+            android:name="query"
+            app:argType="string"
+            android:defaultValue="beef"/>
+    </fragment>
+
+</navigation>
