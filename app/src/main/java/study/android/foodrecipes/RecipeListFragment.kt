@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import study.android.foodrecipes.adapters.OnRecipeClickListener
@@ -52,7 +53,7 @@ class RecipeListFragment : Fragment(), OnRecipeClickListener {
                     recipeRecyclerAdapter.showLoadingBar()
                     recipeList.smoothScrollToPosition(recipeRecyclerAdapter.itemCount - 1)
                     recipeListViewModel.nextPage += 1
-                    GlobalScope.launch {
+                    GlobalScope.launch(Dispatchers.IO) {
                         recipeListViewModel.searchRecipeApi(
                             safeArgs.query, recipeListViewModel.nextPage)
                     }
@@ -95,7 +96,7 @@ class RecipeListFragment : Fragment(), OnRecipeClickListener {
 
     private fun searchRecipeApi(query: String, page: Int) {
         recipeRecyclerAdapter.showLoadingBar()
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             recipeListViewModel.searchRecipeApi(query, page)
         }
     }

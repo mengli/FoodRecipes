@@ -1,6 +1,6 @@
 package study.android.foodrecipes.repositories
 
-import retrofit2.Response
+import study.android.foodrecipes.models.ResultWrapper
 import study.android.foodrecipes.requests.RecipeApiClient
 import study.android.foodrecipes.response.RecipeSearchResponse
 
@@ -11,7 +11,7 @@ object RecipeRepository {
     suspend fun searchRecipeApi(
         query: String,
         page: Int
-    ): Response<RecipeSearchResponse> {
+    ): ResultWrapper<RecipeSearchResponse> {
         return recipeApiClient.searchRecipeApi(query, if (page <= 0) 1 else page)
     }
 }

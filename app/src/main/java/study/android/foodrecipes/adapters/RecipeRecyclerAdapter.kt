@@ -67,6 +67,9 @@ class RecipeRecyclerAdapter(private val onRecipeClickListener: OnRecipeClickList
             RecipeViewType.ERROR.ordinal -> {
                 val errorViewHolder = holder as ErrorViewHolder
                 errorViewHolder.errorMessage.text = when (loadStatus) {
+                    LoadStatus.TIME_OUT ->
+                        holder.itemView.context.resources.getString(
+                            R.string.error_message_time_out)
                     LoadStatus.END ->
                         holder.itemView.context.resources.getString(
                             R.string.error_message_end_of_list)
@@ -85,6 +88,7 @@ class RecipeRecyclerAdapter(private val onRecipeClickListener: OnRecipeClickList
         Log.i(TAG, "getItemCount")
         return when (loadStatus) {
             LoadStatus.LOADING,
+            LoadStatus.TIME_OUT,
             LoadStatus.ERROR,
             LoadStatus.END -> recipes.size + 1
             else -> recipes.size
@@ -96,7 +100,8 @@ class RecipeRecyclerAdapter(private val onRecipeClickListener: OnRecipeClickList
             && position == recipes.size
         ) {
             RecipeViewType.LOADING_TYPE.ordinal
-        } else if ((loadStatus == LoadStatus.ERROR
+        } else if ((loadStatus == LoadStatus.TIME_OUT
+                    ||loadStatus == LoadStatus.ERROR
                     || loadStatus == LoadStatus.END)
             && position == recipes.size
         ) {

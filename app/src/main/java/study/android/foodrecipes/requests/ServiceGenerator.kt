@@ -10,7 +10,7 @@ class ServiceGenerator {
 
     companion object {
 
-        var okHttpClient = OkHttpClient().newBuilder()
+        private var okHttpClient = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
             .writeTimeout(5, TimeUnit.SECONDS)
