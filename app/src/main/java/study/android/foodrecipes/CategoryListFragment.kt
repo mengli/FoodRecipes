@@ -14,18 +14,14 @@ import study.android.foodrecipes.utils.VerticalSpacingItemDecorator
 
 class CategoryListFragment : Fragment(), OnCategoryClickListener {
 
-    private lateinit var categoryList: RecyclerView
-    private lateinit var categoryRecyclerAdapter: CategoryRecyclerAdapter
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val fragmentView = inflater.inflate(R.layout.category_list_fragment, container, false)
-        categoryList = fragmentView.findViewById(R.id.category_list)
-        categoryRecyclerAdapter = CategoryRecyclerAdapter(this)
-        categoryList.adapter = categoryRecyclerAdapter
+        val categoryList = fragmentView.findViewById(R.id.category_list) as RecyclerView
+        categoryList.adapter = CategoryRecyclerAdapter(this)
         categoryList.addItemDecoration(VerticalSpacingItemDecorator(30))
         categoryList.layoutManager = LinearLayoutManager(context)
         return fragmentView

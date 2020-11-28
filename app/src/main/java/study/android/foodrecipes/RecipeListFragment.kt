@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,20 +28,23 @@ class RecipeListFragment : Fragment(), OnRecipeClickListener {
         private const val TAG = "RecipeListFragment"
     }
 
-    private lateinit var recipeListViewModel: RecipeListViewModel
-    private lateinit var recipeList: RecyclerView
-    private lateinit var recipeRecyclerAdapter: RecipeRecyclerAdapter
+    private val recipeListViewModel: RecipeListViewModel by lazy {
+        ViewModelProvider(this).get(
+            RecipeListViewModel::class.java
+        )
+    }
+    private val recipeRecyclerAdapter: RecipeRecyclerAdapter by lazy {
+        RecipeRecyclerAdapter(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        recipeListViewModel = ViewModelProvider(this).get(RecipeListViewModel::class.java)
         val safeArgs: RecipeListFragmentArgs by navArgs()
         val fragmentView = inflater.inflate(R.layout.recipe_list_fragment, container, false)
-        recipeList = fragmentView.findViewById(R.id.recipe_list)
-        recipeRecyclerAdapter = RecipeRecyclerAdapter(this)
+        val recipeList = fragmentView.findViewById(R.id.recipe_list) as RecyclerView
         recipeList.adapter = recipeRecyclerAdapter
         recipeList.addItemDecoration(VerticalSpacingItemDecorator(30))
         recipeList.layoutManager = LinearLayoutManager(context)
@@ -49,13 +53,15 @@ class RecipeListFragment : Fragment(), OnRecipeClickListener {
                 if (newState == SCROLL_STATE_IDLE
                     && !recipeList.canScrollVertically(/* scroll down */ 1)
                     && recipeListViewModel.getLoadStatus().value
-                        != RecipeListViewModel.LoadStatus.END) {
+                    != RecipeListViewModel.LoadStatus.END
+                ) {
                     recipeRecyclerAdapter.showLoadingBar()
                     recipeList.smoothScrollToPosition(recipeRecyclerAdapter.itemCount - 1)
                     recipeListViewModel.nextPage += 1
                     GlobalScope.launch(Dispatchers.IO) {
                         recipeListViewModel.searchRecipeApi(
-                            safeArgs.query, recipeListViewModel.nextPage)
+                            safeArgs.query, recipeListViewModel.nextPage
+                        )
                     }
                 }
             }
@@ -71,7 +77,10 @@ class RecipeListFragment : Fragment(), OnRecipeClickListener {
     }
 
     override fun onRecipeClick(position: Int) {
-        TODO("Not yet implemented")
+        val action =
+            RecipeListFragmentDirections.nextAction(
+                recipeRecyclerAdapter.getRecipes(position).recipe_id!!)
+        findNavController().navigate(action)
     }
 
     private fun observeRecipeList() {

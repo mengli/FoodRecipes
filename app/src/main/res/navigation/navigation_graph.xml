@@ -9,17 +9,33 @@
         tools:layout="@layout/category_list_fragment">
         <action
             android:id="@+id/next_action"
-            app:destination="@+id/recipe_dest" />
+            app:destination="@+id/recipe_list_dest" />
     </fragment>
 
     <fragment
-        android:id="@+id/recipe_dest"
+        android:id="@+id/recipe_list_dest"
         android:name="study.android.foodrecipes.RecipeListFragment"
         tools:layout="@layout/recipe_list_fragment">
         <argument
             android:name="query"
             app:argType="string"
             android:defaultValue="beef"/>
+        <action
+            android:id="@+id/next_action"
+            app:destination="@+id/recipe_dest" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipe_dest"
+        android:name="study.android.foodrecipes.RecipeFragment"
+        tools:layout="@layout/recipe_fragment">
+        <argument
+            android:name="rid"
+            app:argType="string"
+            android:defaultValue=""/>
+        <action
+            android:id="@+id/next_action"
+            app:destination="@+id/recipe_list_dest" />
     </fragment>
 
 </navigation>

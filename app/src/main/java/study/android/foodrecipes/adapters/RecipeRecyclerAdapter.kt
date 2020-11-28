@@ -111,6 +111,11 @@ class RecipeRecyclerAdapter(private val onRecipeClickListener: OnRecipeClickList
         }
     }
 
+    fun getRecipes(position: Int): Recipe {
+        Log.i(TAG, "getRecipe")
+        return recipes[position]
+    }
+
     fun setRecipes(recipes: List<Recipe>) {
         Log.i(TAG, "setRecipes")
         this.recipes = recipes

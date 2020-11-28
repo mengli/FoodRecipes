@@ -39,6 +39,7 @@ open class MainActivity : AppCompatActivity() {
                     val action = CategoryListFragmentDirections.nextAction(query)
                     findNavController(R.id.recipe_host_fragment).navigate(action)
                 }
+                searchView.clearFocus()
                 return true
             }
 

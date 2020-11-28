@@ -12,7 +12,7 @@ import study.android.foodrecipes.response.RecipeSearchResponse
 class RecipeListViewModel : ViewModel() {
 
     companion object {
-        private const val TAG = "RecipeApiClient"
+        private const val TAG = "RecipeListViewModel"
     }
 
     enum class LoadStatus {
@@ -48,7 +48,7 @@ class RecipeListViewModel : ViewModel() {
                         recipes.postValue(resultWrapper.value.recipes)
                     } else {
                         val currentRecipeList = recipes.value?.toMutableList()
-                        resultWrapper.value.recipes?.let { currentRecipeList?.addAll(it) }
+                        resultWrapper.value.recipes.let { currentRecipeList?.addAll(it) }
                         recipes.postValue(currentRecipeList)
                     }
                 }
